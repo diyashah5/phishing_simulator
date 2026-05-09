@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template Preview</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .preview-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 32px 24px;
+        }
+        .preview-container h2 {
+            color: #2d7a2d;
+            margin-bottom: 18px;
+        }
+        .preview-container p {
+            margin-bottom: 18px;
+        }
+        .login-link {
+            display: inline-block;
+            background: #2d7a2d;
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 18px;
+        }
+        .login-link:hover {
+            background: #256622;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <h2>Email Preview</h2>
+        <p>Dear User,</p>
+        <p>Your account requires immediate attention. Please sign in to your account to verify your credentials and avoid service interruption.</p>
+        <a href="/templates/fake_login.html" class="login-link">Sign In to Your Account</a>
+        <p style="margin-top:32px; color:#888; font-size:13px;">If you did not request this, please ignore this email or contact IT support.</p>
+    </div>
+</body>
+</html>

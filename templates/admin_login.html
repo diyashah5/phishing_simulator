@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login - PhishAware</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .login-page {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f6f8;
+    }
+
+    .login-card {
+      background-color: white;
+      padding: 40px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+      width: 350px;
+      text-align: center;
+    }
+
+    .login-card h2 {
+      margin-bottom: 20px;
+      color: #1479ff;
+    }
+
+    .login-card input[type="text"],
+    .login-card input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .login-card button {
+      width: 100%;
+      padding: 15px;
+      background-color: #1479ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .login-card button:hover {
+      background-color: #1479ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card">
+      <h2> PhishAware Admin Login</h2>
+      <form method="POST">
+        <input type="text" name="username" placeholder="Admin Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+
+

@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+phishing.db
+captured_credentials.txt
+.env
+.DS_Store

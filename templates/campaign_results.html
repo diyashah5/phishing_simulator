@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Campaign Results</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #2c3e50;
+      color: white;
+      
+      padding: 20px 0;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 20px;
+      color: #ecf0f1;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 12px 20px;
+      text-decoration: none;
+      font-size: large;
+      font-weight: bold;
+    }
+
+    .sidebar a:hover {
+      background: #34495e;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .header h2 {
+      margin: 0;
+    }
+
+    .header .buttons a {
+      text-decoration: none;
+      color: white;
+      background: #007bff;
+      padding: 8px 14px;
+      border-radius: 5px;
+      margin-left: 10px;
+    }
+
+    .header .buttons a:hover {
+      background: #0056b3;
+    }
+
+    .chart-row {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .chart-box {
+      flex: 1;
+      min-width: 220px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+      background: #fff;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    
+
+    input[type="search"] {
+      width: 300px;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #bbb;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>📊 PhishAware</h2>
+    <a href="/admin/dashboard">Dashboard</a>
+    <a href="/admin/create-campaign">Create Campaign</a>
+    <a href="#">Users</a>
+    <a href="#">Groups</a>
+    <a href="#">Reports</a>
+    <a href="#">Settings</a>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <h2>Campaign Results: {{ campaign_name }}</h2>
+      <div class="buttons">
+        <a href="/admin/campaign/{{ campaign_id }}/export">Export CSV</a>
+        <a href="/admin/dashboard">Refresh</a>
+        <a href="#">Delete</a>
+      </div>
+    </div>
+
+    {% set total = results | length %}
+    {% set opened = results | selectattr('2', 'equalto', 1) | list | length %}
+    {% set clicked = results | selectattr('3', 'equalto', 1) | list | length %}
+    {% set submitted = results | selectattr('4', 'equalto', 1) | list | length %}
+
+    <div class="chart-row">
+      <div class="chart-box">
+        <h4>Submitted</h4>
+        <canvas id="submittedChart" data-value="{{ submitted }}" data-total="{{ total }}"></canvas>
+      </div>
+      <div class="chart-box">
+        <h4>Opened</h4>
+        <canvas id="openedChart" data-value="{{ opened }}" data-total="{{ total }}"></canvas>
+      </div>
+      <div class="chart-box">
+        <h4>Clicked</h4>
+        <canvas id="clickedChart" data-value="{{ clicked }}" data-total="{{ total }}"></canvas>
+      </div>
+    </div>
+
+    <input type="search" id="searchInput" placeholder="Search by name or email...">
+
+    <table id="resultsTable">
+      <thead>
+<tr>
+    <th>Email</th>
+    <th>Password</th>
+    <th>Opened</th>
+    <th>Clicked</th>
+    <th>Submitted</th>
+    <th>Timestamp</th>
+    <th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for row in results %}
+
+<tr>
+
+    <td>{{ row[0] }}</td>
+
+    <td>
+        {% if row[1] %}
+            {{ row[1] }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+
+    <td>
+        {% if row[2] == 1 %}
+            ✅
+        {% else %}
+            ❌
+        {% endif %}
+    </td>
+
+    <td>
+        {% if row[3] == 1 %}
+            ✅
+        {% else %}
+            ❌
+        {% endif %}
+    </td>
+
+    <td>
+        {% if row[4] == 1 %}
+            ✅
+        {% else %}
+            ❌
+        {% endif %}
+    </td>
+
+    <td>
+        {% if row[5] %}
+            {{ row[5] }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+
+    <td>
+
+        {% if row[4] == 1 %}
+
+            <span style="color:red;font-weight:bold;">
+                Credentials Submitted
+            </span>
+
+        {% elif row[3] == 1 %}
+
+            <span style="color:orange;font-weight:bold;">
+                Link Clicked
+            </span>
+
+        {% elif row[2] == 1 %}
+
+            <span style="color:green;font-weight:bold;">
+                Email Opened
+            </span>
+
+        {% else %}
+
+            <span style="color:gray;">
+                No Action
+            </span>
+
+        {% endif %}
+
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+    </table>
+  </div>
+
+  <script>
+    const chartColors = ['#28a745', '#007bff', '#ffc107', '#6c757d'];
+
+    const chartData = (ctx, label, value, remainder) => new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [label, `Not ${label}`],
+        datasets: [{ data: [value, remainder], backgroundColor: [chartColors[0], '#e0e0e0'] }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+
+    ['submittedChart', 'openedChart', 'clickedChart'].forEach(id => {
+      const el = document.getElementById(id);
+      const value = parseInt(el.dataset.value);
+      const total = parseInt(el.dataset.total);
+      chartData(el, el.previousElementSibling.textContent, value, total - value);
+    });
+
+
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const query = this.value.toLowerCase();
+      document.querySelectorAll('#resultsTable tbody tr').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>

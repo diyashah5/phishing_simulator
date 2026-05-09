@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Portal Login</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #e0eafc, #cfdef3 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(44, 62, 80, 0.12);
+            padding: 36px 32px 28px 32px;
+        }
+        .login-logo {
+            display: block;
+            margin: 0 auto 18px auto;
+            width: 60px;
+        }
+        .login-container h2 {
+            text-align: center;
+            color: #2d7a2d;
+            margin-bottom: 22px;
+            font-weight: 600;
+        }
+        .login-container label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 500;
+            color: #333;
+        }
+        .login-container input[type="email"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #bfc9d1;
+            border-radius: 5px;
+            font-size: 15px;
+            background: #f7fafd;
+            transition: border 0.2s;
+        }
+        .login-container input[type="email"]:focus,
+        .login-container input[type="password"]:focus {
+            border: 1.5px solid #2d7a2d;
+            outline: none;
+        }
+        .login-container button {
+            width: 100%;
+            background: #2d7a2d;
+            color: #fff;
+            padding: 12px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-container button:hover {
+            background: #256622;
+        }
+        .login-container .forgot {
+            display: block;
+            text-align: right;
+            margin-bottom: 18px;
+            color: #2980b9;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .login-container .forgot:hover {
+            text-decoration: underline;
+        }
+        .login-container .disclaimer {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #888;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="/static/logo.png" alt="Company Logo" class="login-logo" onerror="this.style.display='none'">
+        <h2>Sign in to your account</h2>
+        <form method="POST">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" value="{{ request.args.get('email', '') }}" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            
+            <a href="#" class="forgot">Forgot password?</a>
+            <button type="submit">Sign In</button>
+        </form>
+        <div class="disclaimer">
+            &copy; 2025 Secure Portal. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
+
+
+

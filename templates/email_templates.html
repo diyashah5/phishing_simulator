@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Templates</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h2 {
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 16px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .actions a {
+            margin-right: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .actions a:hover {
+            text-decoration: underline;
+        }
+        label.checkbox-label {
+            display: flex;
+            align-items: center;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+        label.checkbox-label input[type="checkbox"] {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h2>✉️ Email Templates</h2>
+
+    <form method="POST">
+        <label for="template_name">Template Name</label>
+        <input type="text" id="template_name" name="template_name" placeholder="e.g. HR Policy Update" required>
+
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" placeholder="e.g. Action Required: HR Policy" required>
+
+        <label for="message">Email Message</label>
+        <textarea id="message" name="message" rows="4" placeholder="e.g. Please review the updated policy document attached." required></textarea>
+
+        <label class="checkbox-label">
+            <input type="checkbox" id="add_link" name="add_link" checked>
+            Add fake login link automatically
+        </label>
+
+        <button type="submit">💾 Save Template</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Message</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for template in templates %}
+            <tr>
+                <td>{{ template[1] }}</td>
+                <td>{{ template[2] }}</td>
+                <td>{{ template[3][:50] }}...</td>
+                <td class="actions">
+                    <a href="/admin/email-templates/view/{{ template[0] }}" target="_blank">View</a>
+                    <a href="/admin/email-templates/delete/{{ template[0] }}" onclick="return confirm('Delete this template?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

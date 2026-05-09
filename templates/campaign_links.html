@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Links</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        body{
+            background:#f1f5f9;
+            font-family:Arial,sans-serif;
+            margin:0;
+            padding:40px;
+        }
+
+        .container{
+            max-width:1000px;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:14px;
+            box-shadow:0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            text-align:center;
+            color:#0f172a;
+            margin-bottom:30px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th{
+            background:#2563eb;
+            color:white;
+            padding:14px;
+            text-align:left;
+        }
+
+        td{
+            padding:14px;
+            border-bottom:1px solid #ddd;
+            vertical-align:top;
+        }
+
+        tr:hover{
+            background:#f8fafc;
+        }
+
+        .email{
+            font-weight:bold;
+            color:#0f172a;
+        }
+
+        .link-box{
+            background:#f8fafc;
+            padding:10px;
+            border-radius:8px;
+            word-break:break-all;
+            border:1px solid #cbd5e1;
+        }
+
+        .copy-btn{
+            background:#2563eb;
+            color:white;
+            border:none;
+            padding:8px 14px;
+            border-radius:6px;
+            cursor:pointer;
+            margin-top:8px;
+        }
+
+        .copy-btn:hover{
+            background:#1d4ed8;
+        }
+
+        .top-actions{
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:20px;
+        }
+
+        .btn{
+            text-decoration:none;
+            background:#0f172a;
+            color:white;
+            padding:10px 18px;
+            border-radius:8px;
+        }
+
+        .btn:hover{
+            background:#1e293b;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="top-actions">
+
+        <a href="/admin/dashboard" class="btn">
+            ← Dashboard
+        </a>
+
+        <a href="/admin/campaign/{{ campaign_id }}/results"
+           class="btn">
+            View Results
+        </a>
+
+    </div>
+
+    <h1>
+        Phishing Links — Campaign {{ campaign_id }}
+    </h1>
+
+    <table>
+
+        <tr>
+            <th>Email</th>
+            <th>Phishing Link</th>
+            <th>Action</th>
+        </tr>
+
+        {% for item in links %}
+
+        <tr>
+
+            <td class="email">
+                {{ item.email }}
+            </td>
+
+            <td>
+
+                <div class="link-box"
+                     id="link{{ loop.index }}">
+
+                    {{ item.link }}
+
+                </div>
+
+            </td>
+
+            <td>
+
+                <button
+                    class="copy-btn"
+                    onclick="copyLink('link{{ loop.index }}')">
+
+                    Copy
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+
+<script>
+
+function copyLink(id){
+
+    let text =
+        document.getElementById(id).innerText;
+
+    navigator.clipboard.writeText(text);
+
+    alert("Link copied!");
+
+}
+
+</script>
+
+</body>
+</html>

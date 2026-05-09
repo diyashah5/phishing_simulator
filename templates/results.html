@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Campaign Results Overview</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      padding: 40px;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 14px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    th {
+      background-color: #1479ff;
+      color: white;
+      font-weight: bold;
+    }
+    a.view-link {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a.view-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📊 Campaign Overview</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>📌 Campaign Name</th>
+        <th>📅 Launch Date</th>
+        <th>👥 Group Name</th>
+        <th>📈 View Results</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for campaign in campaigns %}
+      <tr>
+        <td>{{ campaign[1] }}</td> <!-- name -->
+        <td>{{ campaign[4] or 'N/A' }}</td> <!-- launch_date -->
+        <td>{{ campaign[3] }}</td> <!-- group_name -->
+        <td><a href="/admin/campaign/{{ campaign[0] }}/results" class="view-link">View 🔎</a></td> <!-- id -->
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</body>
+</html>
