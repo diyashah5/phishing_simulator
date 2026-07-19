@@ -65,6 +65,16 @@ http://127.0.0.1:5000/admin/login
 3. Copy the generated phishing links for each target.
 4. Review campaign results and export data as needed.
 
+## Deployment
+
+This project supports environment-based deployment using configurable `BASE_URL` and SMTP credentials:
+
+- **Local**: `BASE_URL=http://127.0.0.1:10000` (defined in `.env`)
+- **Production**: Set `BASE_URL=https://your-app.onrender.com` on Render
+- **Email**: Configure `MAILTRAP_*` environment variables for automated email delivery
+
+This design ensures seamless operation across development and production environments without code changes.
+
 ## Notes
 
 - `phishing.db` is generated automatically on first run.
