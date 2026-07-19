@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect, session, send_file, make_response, url_for
 import sqlite3
 from io import BytesIO
@@ -7,10 +8,20 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "secret"
+BASE_URL = os.getenv("BASE_URL", "https://your-app-name.onrender.com")
+DATABASE_PATH = os.getenv("DATABASE_PATH", "phishing.db")
+
+_original_sqlite_connect = sqlite3.connect
+
+def _connect_db(path, *args, **kwargs):
+    resolved_path = os.getenv("DATABASE_PATH", path)
+    return _original_sqlite_connect(resolved_path, *args, **kwargs)
+
+sqlite3.connect = _connect_db
 
 # ------------------ DATABASE INIT ------------------
 def init_db():
-    with sqlite3.connect("phishing.db") as conn:
+    with sqlite3.connect(DATABASE_PATH) as conn:
         c = conn.cursor()
 
         c.execute('''CREATE TABLE IF NOT EXISTS admin (
@@ -57,6 +68,9 @@ def init_db():
             c.execute("INSERT INTO admin (username, password) VALUES (?, ?)", ('admin', 'admin123'))
 
         conn.commit()
+
+# Initialize the database on startup so gunicorn can create the tables
+init_db()
 
 # ------------------ ROUTES ------------------
 
@@ -155,8 +169,15 @@ def create_campaign():
 
             campaign_id = c.lastrowid
 
-            # Insert targets into events table
-            for email in targets:
+            # Insert users from the selected group into events
+            c.execute("SELECT email FROM users WHERE group_name=?", (group_name,))
+            group_users = c.fetchall()
+
+            all_emails = set(targets)
+            for email in group_users:
+                all_emails.add(email[0])
+
+            for email in sorted(all_emails):
                 c.execute("""
                     INSERT INTO events
                     (email, campaign_id)
@@ -182,7 +203,7 @@ def campaign_links(campaign_id):
     links = [
         {
             "email": email[0],
-            "link": f"http://127.0.0.1:5000/fake-login?email={email[0]}&campaign_id={campaign_id}"
+            "link": f"{BASE_URL}/fake-login?email={email[0]}&campaign_id={campaign_id}"
         }
         for email in targets
     ]
@@ -350,7 +371,7 @@ def export_csv(campaign_id):
 @app.route("/admin/logout")
 def admin_logout():
     session.pop("admin", None)
-    return redirect("/admin/login")
+    return redirect(url_for("admin_login"))
 
 @app.route('/admin/users-groups', methods=['GET', 'POST'])
 def users_groups():
@@ -448,7 +469,7 @@ def results():
 # ------------------ MAIN ------------------
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)
 
 
 
