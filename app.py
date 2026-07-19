@@ -519,7 +519,7 @@ def email_templates():
         add_link = request.form.get("add_link")
 
         if add_link:
-            message += '\n\n <a href="/fake-login">View Policy Document</a>'
+            message += f'\n\n <a href="{BASE_URL}/fake-login">View Policy Document</a>'
 
         cursor.execute("INSERT INTO email_templates (name, subject, message) VALUES (?, ?, ?)", (name, subject, message))
         conn.commit()
