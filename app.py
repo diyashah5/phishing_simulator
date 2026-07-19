@@ -5,6 +5,11 @@ from io import BytesIO
 from PIL import Image
 import csv
 from datetime import datetime
+import smtplib
+from email.mime.text import MIMEText
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "secret"
@@ -68,6 +73,35 @@ def init_db():
             c.execute("INSERT INTO admin (username, password) VALUES (?, ?)", ('admin', 'admin123'))
 
         conn.commit()
+
+def send_phishing_email(to_email, link):
+    """Send phishing simulation email with tracking link via Mailtrap."""
+    try:
+        sender = "noreply@company.com"
+        subject = "Important Policy Update - Action Required"
+        body = f"""Dear User,
+
+Please review the important policy update:
+
+{link}
+
+Best regards,
+IT Security Team
+"""
+
+        msg = MIMEText(body)
+        msg["Subject"] = subject
+        msg["From"] = sender
+        msg["To"] = to_email
+
+        server = smtplib.SMTP(os.getenv("MAILTRAP_HOST"), int(os.getenv("MAILTRAP_PORT")))
+        server.login(os.getenv("MAILTRAP_USER"), os.getenv("MAILTRAP_PASS"))
+        server.send_message(msg)
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"Error sending email to {to_email}: {e}")
+        return False
 
 # Initialize the database on startup so gunicorn can create the tables
 init_db()
@@ -196,6 +230,11 @@ def create_campaign():
                 """, (email, campaign_id))
 
             conn.commit()
+
+        # Send phishing emails to all targets
+        for email in sorted(all_emails):
+            link = f"{BASE_URL}/fake-login?email={email}&campaign_id={campaign_id}"
+            send_phishing_email(email, link)
 
         return redirect(f"/admin/campaign/{campaign_id}/links")
 
