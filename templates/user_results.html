@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Results</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eaf4ff;
+      color: #0056b3;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .details {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .detail-item {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/admin/campaign/{{ campaign_id }}/results">← Back to campaign results</a>
+    <h2>User Result for {{ user_result[0] }}</h2>
+    <div class="badge">{{ status }}</div>
+    <p><strong>Campaign:</strong> {{ campaign_name }}</p>
+
+    <div class="details">
+      <div class="detail-item">
+        <strong>Email:</strong> {{ user_result[0] }}
+      </div>
+      <div class="detail-item">
+        <strong>Password Entered:</strong> {% if user_result[1] %}{{ user_result[1] }}{% else %}-{% endif %}
+      </div>
+      <div class="detail-item">
+        <strong>Opened:</strong> {% if opened %}✅{% else %}❌{% endif %}
+      </div>
+      <div class="detail-item">
+        <strong>Clicked:</strong> {% if clicked %}✅{% else %}❌{% endif %}
+      </div>
+      <div class="detail-item">
+        <strong>Submitted:</strong> {% if submitted %}✅{% else %}❌{% endif %}
+      </div>
+      <div class="detail-item">
+        <strong>Timestamp:</strong> {% if user_result[5] %}{{ user_result[5] }}{% else %}-{% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

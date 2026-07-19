@@ -104,7 +104,7 @@ def dashboard():
     if not session.get("admin"):
         return redirect("/admin/login")
 
-    with sqlite3.connect("phishing.db") as conn:
+    with sqlite3.connect(DATABASE_PATH) as conn:
         c = conn.cursor()
 
         c.execute("SELECT id, name FROM campaigns")
@@ -116,19 +116,30 @@ def dashboard():
         c.execute("SELECT COUNT(*) FROM events")
         total_targets = c.fetchone()[0]
 
+        c.execute("SELECT COUNT(*) FROM events WHERE opened=1")
+        total_opened = c.fetchone()[0]
+
         c.execute("SELECT COUNT(*) FROM events WHERE clicked=1")
         total_clicked = c.fetchone()[0]
 
         c.execute("SELECT COUNT(*) FROM events WHERE submitted=1")
         total_submitted = c.fetchone()[0]
 
+    open_rate = round((total_opened / total_targets) * 100, 1) if total_targets else 0.0
+    click_rate = round((total_clicked / total_targets) * 100, 1) if total_targets else 0.0
+    submit_rate = round((total_submitted / total_targets) * 100, 1) if total_targets else 0.0
+
     return render_template(
         "admin_dashboard.html",
         campaigns=campaigns,
         total_campaigns=total_campaigns,
         total_targets=total_targets,
+        total_opened=total_opened,
         total_clicked=total_clicked,
-        total_submitted=total_submitted
+        total_submitted=total_submitted,
+        open_rate=open_rate,
+        click_rate=click_rate,
+        submit_rate=submit_rate
     )
 
 
@@ -304,12 +315,56 @@ def awareness():
     return render_template("awareness.html")
 
 
+@app.route("/admin/user/<email>/<int:campaign_id>")
+def user_results(email, campaign_id):
+    if not session.get("admin"):
+        return redirect("/admin/login")
+
+    with sqlite3.connect(DATABASE_PATH) as conn:
+        c = conn.cursor()
+        c.execute("SELECT name FROM campaigns WHERE id=?", (campaign_id,))
+        campaign = c.fetchone()
+        c.execute("""
+            SELECT email, password, opened, clicked, submitted, timestamp
+            FROM events
+            WHERE campaign_id=? AND email=?
+        """, (campaign_id, email))
+        result = c.fetchone()
+
+    if not result:
+        return "User not found", 404
+
+    opened = bool(result[2])
+    clicked = bool(result[3])
+    submitted = bool(result[4])
+
+    if submitted:
+        status = "Credentials Submitted"
+    elif clicked:
+        status = "Link Clicked"
+    elif opened:
+        status = "Email Opened"
+    else:
+        status = "No Action"
+
+    return render_template(
+        "user_results.html",
+        campaign_id=campaign_id,
+        campaign_name=campaign[0] if campaign else "Unknown Campaign",
+        user_result=result,
+        status=status,
+        opened=opened,
+        clicked=clicked,
+        submitted=submitted
+    )
+
+
 @app.route("/admin/campaign/<int:campaign_id>/results")
 def campaign_results(campaign_id):
     if not session.get("admin"):
         return redirect("/admin/login")
 
-    with sqlite3.connect("phishing.db") as conn:
+    with sqlite3.connect(DATABASE_PATH) as conn:
         c = conn.cursor()
         c.execute("SELECT name FROM campaigns WHERE id=?", (campaign_id,))
         campaign = c.fetchone()
@@ -318,7 +373,7 @@ def campaign_results(campaign_id):
         SELECT
             email,
             password,
-            CASE WHEN opened=1 OR clicked=1 OR submitted=1 THEN 1 ELSE 0 END,
+            opened,
             clicked,
             submitted,
             timestamp
@@ -327,16 +382,26 @@ def campaign_results(campaign_id):
     """, (campaign_id,))
         results = c.fetchall()
 
-        submitted_count = sum(
-        1 for row in results
-        if row[4]
-    )
+    total = len(results)
+    opened_count = sum(1 for row in results if row[2])
+    clicked_count = sum(1 for row in results if row[3])
+    submitted_count = sum(1 for row in results if row[4])
+
+    open_rate = round((opened_count / total) * 100, 1) if total else 0.0
+    click_rate = round((clicked_count / total) * 100, 1) if total else 0.0
+    submit_rate = round((submitted_count / total) * 100, 1) if total else 0.0
 
     return render_template("campaign_results.html",
                            campaign_id=campaign_id,
                            campaign_name=campaign[0],
                            results=results,
-                           submitted_count=submitted_count)
+                           total=total,
+                           opened_count=opened_count,
+                           clicked_count=clicked_count,
+                           submitted_count=submitted_count,
+                           open_rate=open_rate,
+                           click_rate=click_rate,
+                           submit_rate=submit_rate)
 
 
 @app.route("/admin/campaign/<int:campaign_id>/export")

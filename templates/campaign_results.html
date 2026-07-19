@@ -70,6 +70,39 @@
       background: #0056b3;
     }
 
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .summary-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.08);
+      padding: 16px;
+    }
+
+    .summary-card h4 {
+      margin: 0 0 8px;
+      color: #2c3e50;
+    }
+
+    .summary-card p {
+      margin: 0;
+      font-size: 22px;
+      font-weight: bold;
+      color: #1e5f74;
+    }
+
+    .summary-card span {
+      display: block;
+      margin-top: 6px;
+      color: #6c757d;
+      font-size: 14px;
+    }
+
     .chart-row {
       display: flex;
       justify-content: space-between;
@@ -132,23 +165,40 @@
       </div>
     </div>
 
-    {% set total = results | length %}
-    {% set opened = results | selectattr('2', 'equalto', 1) | list | length %}
-    {% set clicked = results | selectattr('3', 'equalto', 1) | list | length %}
-    {% set submitted = results | selectattr('4', 'equalto', 1) | list | length %}
+    <div class="summary-row">
+      <div class="summary-card">
+        <h4>Targets</h4>
+        <p>{{ total }}</p>
+      </div>
+      <div class="summary-card">
+        <h4>Open Rate</h4>
+        <p>{{ open_rate }}%</p>
+        <span>{{ opened_count }} opened</span>
+      </div>
+      <div class="summary-card">
+        <h4>Click Rate</h4>
+        <p>{{ click_rate }}%</p>
+        <span>{{ clicked_count }} clicked</span>
+      </div>
+      <div class="summary-card">
+        <h4>Submission Rate</h4>
+        <p>{{ submit_rate }}%</p>
+        <span>{{ submitted_count }} submitted</span>
+      </div>
+    </div>
 
     <div class="chart-row">
       <div class="chart-box">
         <h4>Submitted</h4>
-        <canvas id="submittedChart" data-value="{{ submitted }}" data-total="{{ total }}"></canvas>
+        <canvas id="submittedChart" data-value="{{ submitted_count }}" data-total="{{ total }}"></canvas>
       </div>
       <div class="chart-box">
         <h4>Opened</h4>
-        <canvas id="openedChart" data-value="{{ opened }}" data-total="{{ total }}"></canvas>
+        <canvas id="openedChart" data-value="{{ opened_count }}" data-total="{{ total }}"></canvas>
       </div>
       <div class="chart-box">
         <h4>Clicked</h4>
-        <canvas id="clickedChart" data-value="{{ clicked }}" data-total="{{ total }}"></canvas>
+        <canvas id="clickedChart" data-value="{{ clicked_count }}" data-total="{{ total }}"></canvas>
       </div>
     </div>
 
@@ -173,7 +223,7 @@
 
 <tr>
 
-    <td>{{ row[0] }}</td>
+    <td><a href="{{ url_for('user_results', email=row[0], campaign_id=campaign_id) }}">{{ row[0] }}</a></td>
 
     <td>
         {% if row[1] %}
