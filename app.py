@@ -236,7 +236,7 @@ def create_campaign():
             link = f"{BASE_URL}/fake-login?email={email}&campaign_id={campaign_id}"
             send_phishing_email(email, link)
 
-        return redirect(f"/admin/campaign/{campaign_id}/links")
+        return redirect(url_for('campaign_links', campaign_id=campaign_id))
 
     return render_template('create_campaign.html')
 
