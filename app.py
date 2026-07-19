@@ -316,7 +316,7 @@ def awareness():
 
 
 @app.route("/admin/user/<email>/<int:campaign_id>")
-def user_results(email, campaign_id):
+def user_result(email, campaign_id):
     if not session.get("admin"):
         return redirect("/admin/login")
 
@@ -386,10 +386,11 @@ def campaign_results(campaign_id):
     opened_count = sum(1 for row in results if row[2])
     clicked_count = sum(1 for row in results if row[3])
     submitted_count = sum(1 for row in results if row[4])
+    no_action_count = total - opened_count
 
-    open_rate = round((opened_count / total) * 100, 1) if total else 0.0
-    click_rate = round((clicked_count / total) * 100, 1) if total else 0.0
-    submit_rate = round((submitted_count / total) * 100, 1) if total else 0.0
+    open_rate = round((opened_count / total) * 100, 2) if total else 0.0
+    click_rate = round((clicked_count / total) * 100, 2) if total else 0.0
+    submit_rate = round((submitted_count / total) * 100, 2) if total else 0.0
 
     return render_template("campaign_results.html",
                            campaign_id=campaign_id,
@@ -399,6 +400,7 @@ def campaign_results(campaign_id):
                            opened_count=opened_count,
                            clicked_count=clicked_count,
                            submitted_count=submitted_count,
+                           no_action_count=no_action_count,
                            open_rate=open_rate,
                            click_rate=click_rate,
                            submit_rate=submit_rate)

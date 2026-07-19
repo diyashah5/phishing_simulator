@@ -185,6 +185,11 @@
         <p>{{ submit_rate }}%</p>
         <span>{{ submitted_count }} submitted</span>
       </div>
+      <div class="summary-card">
+        <h4>No Action</h4>
+        <p>{{ no_action_count }}</p>
+        <span>{{ no_action_count }} users did not open</span>
+      </div>
     </div>
 
     <div class="chart-row">
@@ -223,7 +228,7 @@
 
 <tr>
 
-    <td><a href="{{ url_for('user_results', email=row[0], campaign_id=campaign_id) }}">{{ row[0] }}</a></td>
+    <td><a href="{{ url_for('user_result', email=row[0], campaign_id=campaign_id) }}">{{ row[0] }}</a></td>
 
     <td>
         {% if row[1] %}
