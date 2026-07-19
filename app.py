@@ -13,7 +13,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "secret"
-BASE_URL = os.getenv("BASE_URL", "https://your-app-name.onrender.com")
+BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:10000")
 DATABASE_PATH = os.getenv("DATABASE_PATH", "phishing.db")
 
 _original_sqlite_connect = sqlite3.connect

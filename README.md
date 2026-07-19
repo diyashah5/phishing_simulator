@@ -50,7 +50,7 @@ python app.py
 4. Open the admin page in your browser:
 
 ```text
-http://127.0.0.1:5000/admin/login
+http://127.0.0.1:10000/admin/login
 ```
 
 ## Default Admin Credentials
