@@ -16,13 +16,6 @@ app.secret_key = "secret"
 BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:10000")
 DATABASE_PATH = os.getenv("DATABASE_PATH", "phishing.db")
 
-_original_sqlite_connect = sqlite3.connect
-
-def _connect_db(path, *args, **kwargs):
-    resolved_path = os.getenv("DATABASE_PATH", path)
-    return _original_sqlite_connect(resolved_path, *args, **kwargs)
-
-sqlite3.connect = _connect_db
 
 # ------------------ DATABASE INIT ------------------
 def init_db():
@@ -119,7 +112,7 @@ def admin_login():
         username = request.form["username"]
         password = request.form["password"]
 
-        with sqlite3.connect("phishing.db") as conn:
+        with sqlite3.connect(DATABASE_PATH) as conn:
             c = conn.cursor()
             c.execute("SELECT * FROM admin WHERE username=? AND password=?", (username, password))
             admin = c.fetchone()
@@ -196,7 +189,7 @@ def create_campaign():
             if email.strip()
         ]
 
-        with sqlite3.connect("phishing.db") as conn:
+        with sqlite3.connect(DATABASE_PATH) as conn:
             c = conn.cursor()
 
             # Insert campaign
@@ -245,7 +238,7 @@ def campaign_links(campaign_id):
     if not session.get("admin"):
         return redirect("/admin/login")
 
-    with sqlite3.connect("phishing.db") as conn:
+    with sqlite3.connect(DATABASE_PATH) as conn:
         c = conn.cursor()
         c.execute("SELECT email FROM events WHERE campaign_id=?", (campaign_id,))
         targets = c.fetchall()
@@ -266,7 +259,7 @@ def preview_campaign(campaign_id, email):
     if not session.get("admin"):
         return redirect("/admin/login")
 
-    with sqlite3.connect("phishing.db") as conn:
+    with sqlite3.connect(DATABASE_PATH) as conn:
         c = conn.cursor()
         c.execute("SELECT name, message FROM campaigns WHERE id=?", (campaign_id,))
         campaign = c.fetchone()
@@ -286,7 +279,7 @@ def fake_login():
         entered_email = request.form["email"]
         password = request.form["password"]
 
-        with sqlite3.connect("phishing.db") as conn:
+        with sqlite3.connect(DATABASE_PATH) as conn:
             c = conn.cursor()
             c.execute("""
             UPDATE events
@@ -312,7 +305,7 @@ def fake_login():
 
         if email and campaign_id:
 
-            with sqlite3.connect("phishing.db") as conn:
+            with sqlite3.connect(DATABASE_PATH) as conn:
                 c = conn.cursor()
 
                 c.execute("""
@@ -337,7 +330,7 @@ def track_open():
     campaign_id = request.args.get("campaign_id")
 
     if email and campaign_id:
-        with sqlite3.connect("phishing.db") as conn:
+        with sqlite3.connect(DATABASE_PATH) as conn:
             c = conn.cursor()
             c.execute("UPDATE events SET opened = 1 WHERE email = ? AND campaign_id = ?", (email, campaign_id))
             conn.commit()
@@ -450,7 +443,7 @@ def export_csv(campaign_id):
     if not session.get("admin"):
         return redirect("/admin/login")
 
-    with sqlite3.connect("phishing.db") as conn:
+    with sqlite3.connect(DATABASE_PATH) as conn:
         c = conn.cursor()
         c.execute("SELECT name FROM campaigns WHERE id=?", (campaign_id,))
         campaign = c.fetchone()
@@ -487,7 +480,7 @@ def users_groups():
     import sqlite3
     from flask import request, render_template
 
-    conn = sqlite3.connect('phishing.db')
+    conn = sqlite3.connect(DATABASE_PATH)
     c = conn.cursor()
 
     # Form submission
@@ -509,7 +502,7 @@ def email_templates():
     if not session.get("admin"):
         return redirect("/admin/login")
 
-    conn = sqlite3.connect("phishing.db")
+    conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
 
     if request.method == "POST":
@@ -536,7 +529,7 @@ def view_email_template(template_id):
     if not session.get("admin"):
         return redirect("/admin/login")
 
-    conn = sqlite3.connect("phishing.db")
+    conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT name, subject, message FROM email_templates WHERE id = ?", (template_id,))
     result = cursor.fetchone()
@@ -554,7 +547,7 @@ def delete_email_template(template_id):
     if not session.get("admin"):
         return redirect("/admin/login")
 
-    conn = sqlite3.connect("phishing.db")
+    conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM email_templates WHERE id=?", (template_id,))
     conn.commit()
@@ -565,7 +558,7 @@ def results():
     if not session.get("admin"):
         return redirect("/admin/login")
 
-    conn = sqlite3.connect("phishing.db")
+    conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT id, name, message, group_name, launch_date FROM campaigns")
     campaigns = cursor.fetchall()
