@@ -171,22 +171,22 @@
         <p>{{ total }}</p>
       </div>
       <div class="summary-card">
-        <h4>Open Rate</h4>
+        <h4>Email Engagement</h4>
         <p>{{ open_rate }}%</p>
-        <span>{{ opened_count }} opened</span>
+        <span>{{ opened_count }} engaged</span>
       </div>
       <div class="summary-card">
-        <h4>Click Rate</h4>
+        <h4>Link Interaction</h4>
         <p>{{ click_rate }}%</p>
-        <span>{{ clicked_count }} clicked</span>
+        <span>{{ clicked_count }} interacted</span>
       </div>
       <div class="summary-card">
-        <h4>Submission Rate</h4>
+        <h4>Credential Compromise</h4>
         <p>{{ submit_rate }}%</p>
-        <span>{{ submitted_count }} submitted</span>
+        <span>{{ submitted_count }} submitted credentials</span>
       </div>
       <div class="summary-card">
-        <h4>No Action</h4>
+        <h4>Ignored Emails</h4>
         <p>{{ no_action_count }}</p>
         <span>{{ no_action_count }} users did not open</span>
       </div>
@@ -194,15 +194,15 @@
 
     <div class="chart-row">
       <div class="chart-box">
-        <h4>Submitted</h4>
+        <h4>Credential Compromise</h4>
         <canvas id="submittedChart" data-value="{{ submitted_count }}" data-total="{{ total }}"></canvas>
       </div>
       <div class="chart-box">
-        <h4>Opened</h4>
+        <h4>Email Engagement</h4>
         <canvas id="openedChart" data-value="{{ opened_count }}" data-total="{{ total }}"></canvas>
       </div>
       <div class="chart-box">
-        <h4>Clicked</h4>
+        <h4>Link Interaction</h4>
         <canvas id="clickedChart" data-value="{{ clicked_count }}" data-total="{{ total }}"></canvas>
       </div>
     </div>
@@ -275,19 +275,19 @@
         {% if row[4] == 1 %}
 
             <span style="color:red;font-weight:bold;">
-                Credentials Submitted
+                Credential Compromise
             </span>
 
         {% elif row[3] == 1 %}
 
             <span style="color:orange;font-weight:bold;">
-                Link Clicked
+                Link Interaction
             </span>
 
         {% elif row[2] == 1 %}
 
             <span style="color:green;font-weight:bold;">
-                Email Opened
+                Email Engagement
             </span>
 
         {% else %}
